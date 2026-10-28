@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Pusher Help</title>
+<style>
+:root{
+  --bg:#f3f4f6; --panel:#ffffff; --fg:#1f2328; --sub:#5f6670; --border:#d5d9de;
+  --accent:#0696d7; --accent-soft:#e3f2fb; --good:#2e7d32; --warn:#a15c00; --bad:#c62828;
+  --code-bg:#f0f2f4; --kbd:#e9ecef;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1e2227; --panel:#262b31; --fg:#e6e8eb; --sub:#9ca3ab; --border:#3b424b;
+    --accent:#3da2e6; --accent-soft:#1d3a4f; --good:#5cc46a; --warn:#e8a93c; --bad:#f06a6a;
+    --code-bg:#1b1f24; --kbd:#323840;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1e2227; --panel:#262b31; --fg:#e6e8eb; --sub:#9ca3ab; --border:#3b424b;
+  --accent:#3da2e6; --accent-soft:#1d3a4f; --good:#5cc46a; --warn:#e8a93c; --bad:#f06a6a;
+  --code-bg:#1b1f24; --kbd:#323840;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:16px}
+html.smooth{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 "Segoe UI",system-ui,sans-serif}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);max-width:1240px;margin:0 auto}
+nav{position:sticky;top:0;height:100vh;overflow:auto;padding:24px 16px 40px 20px;border-right:1px solid var(--border)}
+nav .brand{font-weight:700;font-size:20px;margin-bottom:2px}
+nav .brand span{color:var(--accent)}
+nav .ver{color:var(--sub);font-size:12px;margin-bottom:18px}
+nav ol{list-style:none;margin:0;padding:0}
+nav li a{display:block;padding:4px 10px;border-radius:5px;color:var(--fg);font-size:14px}
+nav li a:hover{background:var(--accent-soft);text-decoration:none}
+nav li a.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+nav .grp{color:var(--sub);font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin:16px 10px 4px}
+nav .theme{margin-top:20px;display:flex;gap:6px}
+nav .theme button{flex:1;font:inherit;font-size:12px;padding:4px;border:1px solid var(--border);
+  background:var(--panel);color:var(--fg);border-radius:5px;cursor:pointer}
+main{padding:28px 40px 120px;max-width:920px}
+section{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:22px 28px;margin:0 0 22px}
+h1{font-size:30px;margin:0 0 6px}
+h2{font-size:21px;margin:0 0 12px;display:flex;align-items:center;gap:10px}
+h2 .n{font-size:12px;color:var(--accent);border:1px solid var(--accent);border-radius:20px;padding:0 8px;font-weight:600}
+h3{font-size:16px;margin:20px 0 6px}
+p{margin:8px 0}
+.lead{color:var(--sub);font-size:16px;margin-bottom:0}
+code,kbd,pre{font-family:Consolas,"Cascadia Mono",monospace;font-size:13px}
+code{background:var(--code-bg);padding:1px 5px;border-radius:4px}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow:auto;line-height:1.45}
+pre code{background:none;padding:0}
+kbd{background:var(--kbd);border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;padding:0 5px}
+.btn{display:inline-block;border:1px solid var(--border);border-radius:4px;padding:0 7px;font-size:13px;background:var(--bg);white-space:nowrap}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:7px 10px;border-bottom:1px solid var(--border)}
+th{color:var(--sub);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+td code{white-space:nowrap}
+.good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)} .acc{color:var(--accent)}
+.note,.tip,.caution{border-left:4px solid var(--accent);background:var(--accent-soft);padding:9px 14px;border-radius:0 6px 6px 0;margin:12px 0}
+.caution{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent)}
+.tip{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}
+ol.steps{padding-left:22px} ol.steps li{margin:6px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.card h4{margin:0 0 4px;font-size:14px}
+figure{margin:14px 0} figure svg{width:100%;height:auto}
+figcaption{color:var(--sub);font-size:13px;text-align:center}
+details{border:1px solid var(--border);border-radius:8px;padding:8px 14px;margin:8px 0}
+details summary{cursor:pointer;font-weight:600}
+@media (max-width:860px){.layout{grid-template-columns:1fr}nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--border)}main{padding:18px}.grid2{grid-template-columns:1fr}section{padding:18px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+  <div class="brand">Data <span>Pusher</span></div>
+  <div class="ver">pyRevit extension · help</div>
+  <ol id="toc">
+    <li class="grp">Start</li>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#quickstart">Quick start</a></li>
+    <li class="grp">Mapping</li>
+    <li><a href="#map-parameters">Map Parameters dialog</a></li>
+    <li><a href="#pairings">One mapping per pairing</a></li>
+    <li><a href="#two-ways">Same vs different category</a></li>
+    <li><a href="#relationships">Relationships</a></li>
+    <li><a href="#data-types">Data types &amp; conversion</a></li>
+    <li><a href="#read-only">Read-only targets</a></li>
+    <li><a href="#type-instance">Type &amp; instance parameters</a></li>
+    <li class="grp">Managing &amp; running</li>
+    <li><a href="#mappings">Mappings window</a></li>
+    <li><a href="#automatic">Automatic runs</a></li>
+    <li><a href="#push-report">Push Now &amp; results</a></li>
+    <li><a href="#import-export">Import &amp; export</a></li>
+    <li class="grp">Rules</li>
+    <li><a href="#rules">Mapping rules</a></li>
+    <li><a href="#rule-states">The ƒ button</a></li>
+    <li><a href="#helpers">Helper reference</a></li>
+    <li><a href="#rule-editor">Rule editor</a></li>
+    <li><a href="#safety">Rule safety</a></li>
+    <li><a href="#cookbook">Rule cookbook</a></li>
+    <li class="grp">Reference</li>
+    <li><a href="#storage">Where settings live</a></li>
+    <li><a href="#limits">Limits</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+  </ol>
+  <div class="theme"><button data-t="light">Light</button><button data-t="dark">Dark</button><button data-t="">Auto</button></div>
+</nav>
+
+<main>
+<!-- ======================================================= -->
+<section id="overview">
+  <h1>Data Pusher</h1>
+  <p class="lead">Copy parameter values from elements of one category to related elements of another &mdash; or between
+  parameters of the same element &mdash; automatically on save, sync, print and export.</p>
+  <figure>
+  <svg viewBox="0 0 760 170" role="img" aria-label="Flow: A element, relationship, rule, B element">
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="var(--accent)"/></marker></defs>
+    <g font-family="Segoe UI, sans-serif" font-size="13" fill="var(--fg)">
+      <rect x="10" y="35" width="170" height="100" rx="10" fill="var(--panel)" stroke="var(--border)"/>
+      <text x="95" y="60" text-anchor="middle" font-weight="600">A element</text>
+      <text x="95" y="82" text-anchor="middle" fill="var(--sub)">e.g. Room 204</text>
+      <text x="95" y="104" text-anchor="middle" fill="var(--sub)">Department = "Imaging"</text>
+      <rect x="215" y="50" width="150" height="70" rx="10" fill="var(--accent-soft)" stroke="var(--accent)"/>
+      <text x="290" y="78" text-anchor="middle" font-weight="600">Relationship</text>
+      <text x="290" y="99" text-anchor="middle" fill="var(--sub)">door is in room</text>
+      <rect x="400" y="50" width="150" height="70" rx="10" fill="var(--panel)" stroke="var(--accent)" stroke-dasharray="5 4"/>
+      <text x="475" y="78" text-anchor="middle" font-weight="600">ƒ Rule (optional)</text>
+      <text x="475" y="99" text-anchor="middle" fill="var(--sub)">value.upper()</text>
+      <rect x="585" y="35" width="165" height="100" rx="10" fill="var(--panel)" stroke="var(--border)"/>
+      <text x="667" y="60" text-anchor="middle" font-weight="600">B element</text>
+      <text x="667" y="82" text-anchor="middle" fill="var(--sub)">e.g. Door 204A</text>
+      <text x="667" y="104" text-anchor="middle" fill="var(--sub)">Dept = "IMAGING"</text>
+      <line x1="180" y1="85" x2="213" y2="85" stroke="var(--accent)" stroke-width="2" marker-end="url(#ar)"/>
+      <line x1="365" y1="85" x2="398" y2="85" stroke="var(--accent)" stroke-width="2" marker-end="url(#ar)"/>
+      <line x1="550" y1="85" x2="583" y2="85" stroke="var(--accent)" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="380" y="160" text-anchor="middle" fill="var(--sub)" font-size="12">One mapping = category A + category B + relationship + any number of parameter pairs (each with an optional rule)</text>
+    </g>
+  </svg>
+  </figure>
+  <div class="grid2">
+    <div class="card"><h4>Mappings live in the project</h4>Stored as Extensible Storage, so they travel with the model and sync to central.</div>
+    <div class="card"><h4>Type-safe</h4>Every pair is checked: exact, converts, lossy or incompatible. Units are handled for you.</div>
+    <div class="card"><h4>Rules</h4>Small sandboxed Python snippets transform a value: switch/case, math, if/then, regex.</div>
+    <div class="card"><h4>Hands-off</h4>Runs on save, sync, print and export &mdash; silently, without touching unchanged values.</div>
+  </div>
+</section>
+
+<!-- ======================================================= -->
+<section id="install">
+  <h2><span class="n">1</span>Install</h2>
+  <ol class="steps">
+    <li>Unzip <code>DataPusher.extension</code> into a folder listed under <b>pyRevit &rarr; Settings &rarr; Custom Extension Directories</b>.</li>
+    <li>Click <b>Reload</b> in pyRevit. A <b>Parameter Pusher</b> tab appears with the <b>Parameter Pusher</b> panel.</li>
+  </ol>
+  <table>
+    <tr><th>Requirement</th><th>Notes</th></tr>
+    <tr><td>Revit 2022 or later</td><td>Uses the ForgeTypeId units API.</td></tr>
+    <tr><td>pyRevit, IronPython engine</td><td>The default engine. Hooks and dialogs are IronPython 2.7.</td></tr>
+    <tr><td>Revit 2024+ for theming</td><td>Dialogs follow Revit's Light/Dark theme. Older versions use Light.</td></tr>
+  </table>
+  <h3>Ribbon buttons</h3>
+  <table>
+    <tr><th>Button</th><th>What it does</th></tr>
+    <tr><td><b>Map Parameters</b></td><td>Create mappings: pick categories, pair parameters, apply. <a href="#map-parameters">More</a></td></tr>
+    <tr><td><b>Mappings</b></td><td>Report of all mappings: enable, disable, edit, delete, import, export, push, automatic-run settings. <a href="#mappings">More</a></td></tr>
+    <tr><td><b>Push Now</b></td><td>Run all enabled mappings and show the results. <kbd>Shift</kbd>+click runs silently. <a href="#push-report">More</a></td></tr>
+    <tr><td><b>Help</b></td><td>Opens this page. Every dialog also has a <span class="btn">?</span> button and responds to <kbd>F1</kbd>.</td></tr>
+  </table>
+</section>
+
+<!-- ======================================================= -->
+<section id="quickstart">
+  <h2><span class="n">2</span>Quick start</h2>
+  <p>Example: copy each room's <b>Department</b> to the doors in that room.</p>
+  <ol class="steps">
+    <li>Click <b>Map Parameters</b>.</li>
+    <li>In column <b>A &middot; Source category</b> pick <b>Rooms</b>; in column <b>B &middot; Target category</b> pick <b>Doors</b>.</li>
+    <li>The relationship switches to <b>Room &rarr; elements in room</b> automatically.</li>
+    <li>Select <b>Department</b> in the A list. The B list now shows a badge on every parameter (<span class="good">✓ exact</span>, <span class="acc">↻ converts</span>, &hellip;).</li>
+    <li>Select the target parameter in B and click <span class="btn">Add pair A → B</span> (or double-click).</li>
+    <li>Optionally give it a name, then click <span class="btn pri">Apply mapping</span>. It's saved to the project.</li>
+    <li>Click <b>Push Now</b> to run it immediately &mdash; or just save/sync.</li>
+  </ol>
+  <p class="tip">The dialog stays open after <b>Apply</b> so you can build the next mapping straight away.</p>
+</section>
+
+<!-- ======================================================= -->
+<section id="map-parameters">
+  <h2><span class="n">3</span>Map Parameters dialog</h2>
+  <h3>Columns A and B</h3>
+  <p>Each column has a category filter and list, then a parameter filter and list. The caption shows how many
+  elements the category has. Parameters are gathered from up to 60 elements and their types, so parameters that only exist on some families are found too.</p>
+  <p>Each parameter shows <i>Instance</i> or <i>Type</i>, its data type, and whether it is <i>built-in</i>, <i>shared</i> or <i>read-only</i>.
+  Column B lists <b>writable</b> parameters only &mdash; see <a href="#read-only">Read-only targets</a>.</p>
+  <h3>Compatibility badges</h3>
+  <p>After you select a parameter in A, every B parameter gets a badge and a tooltip explaining it.
+  See <a href="#data-types">Data types &amp; conversion</a>.</p>
+  <h3>Relationship</h3>
+  <p>The drop-down under the columns decides how each B element finds its A element. Options that don't fit the
+  chosen categories are greyed out. For <b>Matching key value</b>, two extra boxes appear: <b>Key A</b> and <b>Key B</b>.
+  See <a href="#relationships">Relationships</a>.</p>
+  <h3>Pairs</h3>
+  <table>
+    <tr><th>Control</th><th>Use</th></tr>
+    <tr><td><span class="btn">Add pair A → B</span></td><td>Adds the selected A and B parameters. Double-clicking either list does the same. If B is already fed by another parameter you're asked whether to replace it.</td></tr>
+    <tr><td><span class="btn">Auto-pair same names</span></td><td>Pairs every A parameter with the same-named B parameter when the conversion is exact or safe. Same scope (instance/type) is preferred. Lossy pairs are skipped &mdash; add those by hand.</td></tr>
+    <tr><td>☑ checkbox on a pair</td><td>Disable a pair without deleting it.</td></tr>
+    <tr><td><span class="btn">ƒ</span></td><td>Add or edit a <a href="#rules">rule</a> for the pair; see <a href="#rule-states">the ƒ button</a>. Shown when mapping rules are on, or the pair has a rule.</td></tr>
+    <tr><td><span class="btn">✕</span></td><td>Remove the pair.</td></tr>
+  </table>
+  <h3>Pairs panel size</h3>
+  <p>The pairs list fills the bottom of the window and scrolls. Drag the divider above it to give it more room; the whole
+  window can be resized too.</p>
+  <h3>Footer</h3>
+  <table>
+    <tr><td><span class="btn">Mappings…</span></td><td>Opens the <a href="#mappings">Mappings window</a>.</td></tr>
+    <tr><td><span class="btn">New</span></td><td>Clears the pairs and name to start another mapping (categories stay).</td></tr>
+    <tr><td><span class="btn pri">Apply mapping</span></td><td>Validates and saves the mapping to the project. Problems are shown in red in the footer.</td></tr>
+  </table>
+  <p class="note">Changing a category while pairs exist asks first, because pairs belong to a category pair.</p>
+  <h3 id="pairings">One mapping per category pairing</h3>
+  <p>A mapping is a <b>category pairing</b> &mdash; A, B and the relationship (plus the key parameters for <i>Matching key value</i>) &mdash;
+  holding any number of parameter pairs. There is never more than one mapping for the same pairing:</p>
+  <ul>
+    <li>When the categories and relationship you pick already have a mapping, a blue note says so &mdash;
+    <span class="acc">&#8505; Adds to the existing mapping 'Walls → Doors' (3 pairs)</span> &mdash; and column B marks each target
+    that pairing already feeds (<i>mapped from Width [Type]</i>).</li>
+    <li><b>Apply</b> adds your pairs to that mapping. Identical pairs are ignored. If a target is already fed by a different
+    source you choose <b>Replace</b> or <b>Keep existing</b>.</li>
+    <li>Editing a mapping and switching it to a pairing that already exists offers to merge the two.</li>
+    <li><b>Auto-pair same names</b> skips targets the pairing already feeds.</li>
+    <li>Importing a file folds its mappings into matching pairings too; the file's pairs win on the same target.</li>
+  </ul>
+  <p>Grouping also helps performance: elements are collected and related once per pairing, not once per pair.</p>
+</section>
+
+<!-- ======================================================= -->
+<section id="two-ways">
+  <h2><span class="n">4</span>Same category vs different categories</h2>
+  <div class="grid2">
+    <div class="card"><h4>Same category &rarr; same category</h4>
+      e.g. <b>Doors &rarr; Doors</b>. With <b>Same element</b>, a value is copied to a <i>different</i> parameter on
+      the same element (instance &harr; type works too). Pushing a parameter onto itself on the same element is blocked
+      &mdash; it would do nothing.<br><br>
+      Other same-category relationships (<b>Matching key value</b>, <b>Parent family &rarr; nested</b>,
+      <b>Parent view &rarr; dependent views</b>) link two <i>different</i> elements, so the same parameter is allowed.</div>
+    <div class="card"><h4>Category A &rarr; category B</h4>
+      e.g. <b>Rooms &rarr; Doors</b>. Push into the same-named parameter or any other writable one.
+      <b>Auto-pair same names</b> pairs every compatible same-named parameter in one click.</div>
+  </div>
+  <p>The heading above the relationship box tells you which mode you're in.</p>
+</section>
+
+<!-- ======================================================= -->
+<section id="relationships">
+  <h2><span class="n">5</span>Relationships</h2>
+  <p>How a B (target) element finds its A (source) element. Each target gets values from <b>one</b> source.</p>
+  <table>
+    <tr><th>Relationship</th><th>A</th><th>B</th><th>How it links</th></tr>
+    <tr><td><b>Same element</b></td><td colspan="2">same category</td><td>The element itself. Default when A = B.</td></tr>
+    <tr><td><b>Matching key value</b></td><td>any</td><td>any</td><td>A.Key = B.Key, compared as text, trimmed, case-insensitive. An element never matches itself. Duplicate keys in A make a target <i>ambiguous</i> (skipped).</td></tr>
+    <tr><td><b>Host → hosted</b></td><td>any</td><td>other</td><td>B's host, e.g. Walls → Doors/Windows.</td></tr>
+    <tr><td><b>Room → elements in room</b></td><td>Rooms</td><td>other</td><td>Room of the element in its creation phase. Doors/windows use To Room, then From Room. Other elements use their location point.</td></tr>
+    <tr><td><b>Space → elements in space</b></td><td>MEP Spaces</td><td>other</td><td>Same as rooms, for spaces.</td></tr>
+    <tr><td><b>Level → elements on level</b></td><td>Levels</td><td>other</td><td>Element level, reference/base level parameters, or a view's level.</td></tr>
+    <tr><td><b>Sheet → placed views</b></td><td>Sheets</td><td>Views</td><td>Views placed on the sheet.</td></tr>
+    <tr><td><b>Parent view → dependent views</b></td><td>Views</td><td>Views</td><td>Dependent views get values from their primary view.</td></tr>
+    <tr><td><b>Parent family → nested</b></td><td>any</td><td>any</td><td>Shared nested instances get values from their parent instance.</td></tr>
+    <tr><td><b>Assembly → members</b></td><td>Assemblies</td><td>other</td><td>Members of the assembly.</td></tr>
+    <tr><td><b>Group → members</b></td><td>Model/Detail Groups</td><td>other</td><td>Members of the group.</td></tr>
+  </table>
+  <p class="note">Targets with no related source are counted as "no related source" in the results &mdash; not as failures.</p>
+</section>
+
+<!-- ======================================================= -->
+<section id="data-types">
+  <h2><span class="n">6</span>Data types &amp; conversion</h2>
+  <table>
+    <tr><th>Badge</th><th>Meaning</th><th>Examples</th></tr>
+    <tr><td class="good">✓ exact</td><td>Same storage and data type. The internal value is copied.</td><td>Length → Length, Text → Text, Material → Material</td></tr>
+    <tr><td class="acc">↻ converts</td><td>Safe conversion.</td><td>Any number → Text (formatted with project units), Number ↔ Length via display units, Element → Text (its name), Integer → Number</td></tr>
+    <tr><td class="warn">⚠ lossy</td><td>May lose information or fail for some values. Values that can't convert are counted as failed.</td><td>Text → Length (parses <code>10' 6"</code>, <code>3.5 m</code>), Text → Yes/No, Number → Integer (rounded), Integer ↔ Yes/No, Text → Material (by name)</td></tr>
+    <tr><td class="bad">✕ incompatible</td><td>Not allowed without a rule.</td><td>Length → Area, Element → Number, read-only targets</td></tr>
+  </table>
+  <h3>Units</h3>
+  <p>Revit stores lengths in feet, areas in square feet, and so on. When converting between a measured value and a plain
+  Number or Text, Data Pusher uses the project's display units (<b>Manage → Project Units</b>). So a 3000&nbsp;mm wall in a metric
+  project becomes the number <code>3000</code>, not <code>9.84</code>.</p>
+  <h3>Yes/No</h3>
+  <p>Text becomes <i>Yes</i> for <code>yes y true t 1 on x ✓</code> and <i>No</i> for <code>no n false f 0 off</code> or empty.</p>
+  <p class="tip">An <span class="bad">✕ incompatible</span> pair can still be added if you give it a <a href="#rules">rule</a> that produces the target value. You'll be asked when you click Add pair.</p>
+</section>
+
+<!-- ======================================================= -->
+<section id="read-only">
+  <h2><span class="n">6b</span>Read-only targets</h2>
+  <p>Read-only parameters are filtered out of the target (B) side so you can't map into something Revit won't let you write.</p>
+  <ul>
+    <li>A parameter is hidden from column B if it is read-only on <b>any</b> sampled element or type &mdash; computed values
+    (Area, Volume, Perimeter, Length&hellip;), formula-driven family parameters, and identity values such as Family, Category,
+    Element ID, Edited by, Host and Room.</li>
+    <li>Read-only-ness that comes from an element's <i>situation</i> doesn't hide a parameter: an element inside a
+    <b>group</b>, or a value <b>locked to a global parameter</b>. Those elements are simply skipped at push time.</li>
+    <li>Every push checks each target element again and counts anything it can't write as <b>read-only target</b> in the
+    results &mdash; nothing is attempted, so there are no errors or warnings.</li>
+    <li>Mappings imported from another project whose target is read-only here are flagged in the
+    <a href="#mappings">Mappings</a> list.</li>
+  </ul>
+</section>
+
+<!-- ======================================================= -->
+<section id="type-instance">
+  <h2><span class="n">7</span>Type &amp; instance parameters</h2>
+  <ul>
+    <li>A <b>[Type]</b> source parameter is read from the A element's type.</li>
+    <li>A <b>[Type]</b> target parameter is written to the B element's type &mdash; this affects every instance of that type.</li>
+    <li>If several instances of one type would write <i>different</i> values to the same type parameter, the first value wins
+    and the others are counted as <b>conflicts</b>.</li>
+  </ul>
+</section>
+
+<!-- ======================================================= -->
+<section id="mappings">
+  <h2><span class="n">8</span>Mappings window</h2>
+  <p>One scrolling tree holds every category pairing <i>and</i> its parameter pairs, so everything is managed in one place.
+  Changes are held until you click <span class="btn pri">Save</span>; closing with unsaved changes asks first.</p>
+  <h3>Top bar</h3>
+  <table>
+    <tr><td>Filter box</td><td>Type to show only mappings whose name, categories or parameter names match.</td></tr>
+    <tr><td><span class="btn">Expand all</span> <span class="btn">Collapse all</span></td><td>Show or hide the pairs of every mapping. Mappings with more than 6 pairs start collapsed.</td></tr>
+    <tr><td><span class="btn">Merge duplicates (n)</span></td><td>Only shown when a category pairing is split over several mappings
+      (made before pairings were grouped, or by hand). Combines them into one. Identical pairs are dropped; pairs from disabled
+      mappings and pairs that would feed an already-fed target arrive switched off, so behaviour doesn't change.</td></tr>
+    <tr><td><span class="btn pri">New mapping…</span></td><td>Opens the <a href="#map-parameters">mapping editor</a>. If the pairing you pick already exists, the pairs are added to it.</td></tr>
+  </table>
+  <h3>Mapping row</h3>
+  <table>
+    <tr><td><span class="btn">▾</span> / <span class="btn">▸</span></td><td>Show / hide this mapping's pairs.</td></tr>
+    <tr><td>☑</td><td>Enable or disable the whole mapping. Disabled mappings are dimmed and never run automatically.</td></tr>
+    <tr><td>Name</td><td>The category pairing (<i>Walls → Doors</i>) or your own name, with the relationship (and keys) underneath. Double-click to edit.</td></tr>
+    <tr><td><i>2/3 pairs · ƒ 1</i></td><td>Enabled / total pairs, and how many pairs run an active rule.</td></tr>
+    <tr><td><span class="good">✓ ok</span> / <span class="bad">⚠ 2 issues</span></td><td>Health check. Hover for the list; the issues are also listed under the pairs.
+      It flags a missing category, a relationship that doesn't fit, a read-only target, two enabled pairs feeding the same target,
+      a pair that needs a rule, or a rule that fails the safety check.</td></tr>
+    <tr><td><span class="btn">Edit…</span></td><td>Add, remove or change pairs, or change categories and relationship, in the mapping editor.</td></tr>
+    <tr><td><span class="btn">Push</span></td><td>Run just this mapping now (even if disabled, using what's on screen).</td></tr>
+    <tr><td><span class="btn">✕</span></td><td>Delete the mapping (asks first).</td></tr>
+  </table>
+  <h3>Pair rows</h3>
+  <table>
+    <tr><td>☑</td><td>Enable or disable the pair.</td></tr>
+    <tr><td><i>Width [Type] → Comments</i></td><td>Source and target, with the conversion used (or the first line of an active rule).</td></tr>
+    <tr><td>Badge</td><td><span class="good">✓ exact</span>, <span class="acc">↻ converts</span>, <span class="warn">⚠ lossy</span>, <span class="acc">ƒ rule</span>, or <span class="bad">✕ needs rule</span>.</td></tr>
+    <tr><td><span class="btn">ƒ</span></td><td>The pair's <a href="#rule-states">rule button</a>. Only shown when mapping rules are on, or the pair already has a rule.</td></tr>
+    <tr><td><span class="btn">✕</span></td><td>Delete the pair.</td></tr>
+  </table>
+  <h3>Selecting several mappings</h3>
+  <p><kbd>Ctrl</kbd>/<kbd>Shift</kbd>-click rows to select several. <kbd>Delete</kbd> deletes the selection,
+  <span class="btn">Export…</span> offers to export just the selection, and <kbd>Enter</kbd> edits a single selected mapping.</p>
+  <h3>Settings strip</h3>
+  <table>
+    <tr><th colspan="2">Run automatically</th></tr>
+    <tr><td>On save</td><td>Before every Save and Save As.</td></tr>
+    <tr><td>On sync</td><td>Before Synchronize with Central.</td></tr>
+    <tr><td>Before print</td><td>Before printing.</td></tr>
+    <tr><td>Before export</td><td>Before exporting (PDF, DWG, IFC, …).</td></tr>
+    <tr><th colspan="2">Options</th></tr>
+    <tr><td>Clear targets when source is empty</td><td>Off by default: an empty source leaves the target as it is. When on, text and element targets are cleared. Numbers are never blanked.</td></tr>
+    <tr><td>Mapping rules (ƒ)</td><td>Turns the <a href="#rules">rule</a> feature on or off for the project. See <a href="#rules-switch">Turning rules on and off</a>.</td></tr>
+  </table>
+  <h3>Footer</h3>
+  <table>
+    <tr><td><span class="btn">Import…</span> <span class="btn">Export…</span></td><td>JSON files. See <a href="#import-export">Import &amp; export</a>.</td></tr>
+    <tr><td><span class="btn">Push all enabled</span></td><td>Run every enabled mapping now.</td></tr>
+    <tr><td><span class="btn pri">Save</span> <span class="btn">Close</span></td><td>Store the changes in the project / close the window.</td></tr>
+  </table>
+</section>
+
+<!-- ======================================================= -->
+<section id="automatic">
+  <h2><span class="n">9</span>Automatic runs</h2>
+  <ul>
+    <li>Runs are silent: no dialogs. A summary is written to <code>%APPDATA%\pyRevit\DataPusher\push.log</code>.</li>
+    <li>Values that are already correct are not rewritten, so elements aren't borrowed needlessly in workshared models.</li>
+    <li>Workshared: elements owned by someone else, or changed in central since you last reloaded, are skipped and counted as <b>blocked</b>.</li>
+    <li>Warnings raised while writing are suppressed. A run that changes nothing leaves no undo entry; one that does adds a single <i>Data Pusher: Push parameters</i> step.</li>
+    <li>Family documents, linked models and read-only documents are ignored.</li>
+  </ul>
+  <p class="caution">Revit may refuse changes during some print or export paths. When that happens the run is skipped and logged &mdash; run <b>Push Now</b> before printing if it matters.</p>
+</section>
+
+<!-- ======================================================= -->
+<section id="push-report">
+  <h2><span class="n">10</span>Push Now &amp; results</h2>
+  <p><b>Push Now</b> (or a Push button in Mappings) runs mappings and shows the results window.</p>
+  <table>
+    <tr><th>Column</th><th>Meaning</th></tr>
+    <tr><td>Linked</td><td>Source → target pairs found by the relationship.</td></tr>
+    <tr><td class="good">Updated</td><td>Values written.</td></tr>
+    <tr><td>Same</td><td>Already had the right value (not touched).</td></tr>
+    <tr><td>Empty</td><td>Source was empty (or the rule returned empty) and clearing is off.</td></tr>
+    <tr><td class="bad">Failed</td><td>Conversion failed, e.g. text that isn't a length, or Revit refused the value.</td></tr>
+    <tr><td class="warn">Blocked</td><td>Owned by another user or out of date with central.</td></tr>
+    <tr><td class="warn">Conflict</td><td>Several sources disagreed about one type parameter.</td></tr>
+  </table>
+  <p>The line under each mapping name adds: targets with no related source, ambiguous key matches, parameters missing
+  on some elements, read-only targets, values skipped by a rule, rule errors and other errors.</p>
+</section>
+
+<!-- ======================================================= -->
+<section id="import-export">
+  <h2><span class="n">11</span>Import &amp; export</h2>
+  <ul>
+    <li><b>Export</b> writes all mappings (or just the selected ones) and settings to a JSON file.</li>
+    <li>Categories are stored by built-in name (<code>OST_Doors</code>), parameters by built-in name, shared-parameter GUID or name,
+    so a file works in other projects.</li>
+    <li><b>Import</b> &rarr; <b>Merge</b> adds the mappings; one with the same id replaces the existing one. <b>Replace all</b> removes current mappings first.
+    You can also take the file's automatic-run settings.</li>
+    <li>Mappings for categories that don't exist in this project are kept but skipped, and flagged in the list.</li>
+    <li>If the file contains rules you're told how many &mdash; review them with <span class="btn">ƒ</span> before saving.</li>
+    <li>Imported mappings aren't stored until you click <span class="btn pri">Save</span>.</li>
+  </ul>
+</section>
+
+<!-- ======================================================= -->
+<section id="rules">
+  <h2><span class="n">12</span>Mapping rules</h2>
+  <p>A rule is a small piece of Python attached to one pair. It receives the incoming value and decides what gets written.
+  Click <span class="btn">ƒ</span> on a pair to add one.</p>
+  <h3 id="rules-switch">Turning rules on and off</h3>
+  <p>Most mappings don't need a rule, so rules are an <b>optional feature</b>:</p>
+  <ul>
+    <li><b>Project switch</b> &mdash; <b>Mapping rules (ƒ)</b> in the Mappings window's options. It starts <b>off</b> in projects
+    with no rules (projects that already contain rules keep it on). When off: rules are kept but never run, the
+    <span class="btn">ƒ</span> button is hidden on pairs without a rule, and the rule engine isn't even loaded during save/sync.</li>
+    <li><b>Per pair</b> &mdash; right-click <span class="btn">ƒ</span> &rarr; <i>Rule on for this pair</i>, or the
+    <i>Rule on for this pair</i> checkbox in the rule editor. A switched-off rule is kept; the pair uses the standard conversion.</li>
+    <li>A pair whose types can't convert on their own (<span class="bad">✕ needs rule</span>) only runs while its rule is active;
+    otherwise it is skipped and listed in the results. Adding such a pair while rules are off offers to turn them on.</li>
+  </ul>
+  <h3 id="rule-states">The ƒ button</h3>
+  <table>
+    <tr><th>Looks like</th><th>Means</th><th>Click / right-click</th></tr>
+    <tr><td><span class="btn" style="opacity:.7;color:var(--sub)">ƒ</span></td><td>No rule &mdash; standard conversion.</td><td>Click to add a rule.</td></tr>
+    <tr><td><span class="btn pri">ƒ</span></td><td>Rule present and <b>active</b>. The badge reads <span class="acc">ƒ rule</span>.</td><td>Click to edit &middot; right-click: switch off, remove.</td></tr>
+    <tr><td><span class="btn" style="border-color:var(--accent);color:var(--accent);text-decoration:line-through">ƒ</span></td><td>Rule kept but <b>switched off</b> for this pair.</td><td>Click to edit &middot; right-click: switch on, remove.</td></tr>
+    <tr><td><span class="btn" style="color:var(--sub);text-decoration:line-through">ƒ</span></td><td>Rule kept, but <b>mapping rules are off</b> for the project.</td><td>Turn on <i>Mapping rules (ƒ)</i> to run it.</td></tr>
+  </table>
+  <p class="note">Performance: pairs without an active rule use the plain conversion path; the sandbox and guards are only loaded when a pair actually runs a rule.</p>
+  <h3>Two forms</h3>
+<pre><code># 1. a single expression - its result is written
+value * 1.10 + 2
+
+# 2. a short script - set (or return) value
+if value is None or value == "":
+    value = "N/A"
+else:
+    value = value.upper()</code></pre>
+  <h3>Inputs</h3>
+  <table>
+    <tr><th>Name</th><th>Contains</th></tr>
+    <tr><td><code>value</code></td><td>The incoming source value: text; a number in <b>project display units</b>; <code>True</code>/<code>False</code> for Yes/No; an element's name for element parameters. Never empty unless the pair has <i>Run when the source is empty</i> ticked &mdash; then <code>None</code> when empty.</td></tr>
+    <tr><td><code>text</code></td><td>The source exactly as Revit displays it, e.g. <code>10' - 6"</code>.</td></tr>
+    <tr><td><code>target</code></td><td>The target's current value, same conventions.</td></tr>
+    <tr><td><code>a("Name")</code></td><td>Any other parameter of the A element, by name (instance first, then type).</td></tr>
+    <tr><td><code>b("Name")</code></td><td>Any other parameter of the B element.</td></tr>
+    <tr><td><code>a_info</code>, <code>b_info</code></td><td><code>{'id', 'name', 'category'}</code> of each element.</td></tr>
+  </table>
+  <h3>Result</h3>
+  <table>
+    <tr><th>Rule returns</th><th>What happens</th></tr>
+    <tr><td>a value</td><td>Converted to the target type and written (if different).</td></tr>
+    <tr><td><code>SKIP</code></td><td>Target left untouched. Counted as "skipped by rule".</td></tr>
+    <tr><td><code>None</code> or <code>""</code></td><td>Treated as empty (see the clear-targets setting).</td></tr>
+    <tr><td>an error</td><td>That element is counted as a rule error; the run continues.</td></tr>
+  </table>
+  <h3 id="rule-empty">Empty sources</h3>
+  <p>By default a rule is <b>not called</b> when the source is empty: the pair behaves like the standard conversion, so
+  the target is left as it is (or cleared, if <i>Clear targets when source is empty</i> is on). That keeps rules such as
+  <code>value.upper()</code> from failing on elements whose source is blank. Tick <b>Run when the source is empty</b> in the
+  rule editor when the rule should handle blanks itself, e.g. <code>if not value: value = "N/A"</code> &mdash; the
+  <i>If / then / else</i> template ticks it for you.</p>
+  <h3>How results are converted</h3>
+  <table>
+    <tr><th>Target</th><th>Accepts</th></tr>
+    <tr><td>Text</td><td>Anything. Numbers are written without trailing zeros, booleans as Yes/No.</td></tr>
+    <tr><td>Length/Area/Number…</td><td>A number in display units, or text that parses (<code>"10' 6\""</code>, <code>"3.5"</code>).</td></tr>
+    <tr><td>Integer</td><td>Numbers (rounded) or text containing a number.</td></tr>
+    <tr><td>Yes/No</td><td><code>True</code>/<code>False</code>, numbers (non-zero = Yes), or yes/no text.</td></tr>
+    <tr><td>Element (e.g. Material)</td><td>The element's name.</td></tr>
+  </table>
+</section>
+
+<!-- ======================================================= -->
+<section id="helpers">
+  <h2><span class="n">13</span>Helper reference</h2>
+  <table>
+    <tr><th>Helper</th><th>Does</th><th>Example</th></tr>
+    <tr><td><code>switch(v, cases, default=None)</code></td><td>Look up v in a dict (case-insensitive).</td><td><code>switch(value, {"A": "Alpha"}, default=value)</code></td></tr>
+    <tr><td><code>when(c1, r1, c2, r2, ..., default)</code></td><td>if / elif / else in one line.</td><td><code>when(value &lt; 100, "S", value &lt; 500, "M", "L")</code></td></tr>
+    <tr><td><code>iff(cond, yes, no)</code></td><td>Simple if/else.</td><td><code>iff(value, "Rated", "")</code></td></tr>
+    <tr><td><code>between(v, lo, hi)</code></td><td>lo ≤ v ≤ hi.</td><td><code>between(value, 0, 10)</code></td></tr>
+    <tr><td><code>num(v, default=None)</code></td><td>First number found in text.</td><td><code>num("1,250 SF")</code> → 1250.0</td></tr>
+    <tr><td><code>to_int(v, default=None)</code></td><td>Rounded whole number.</td><td><code>to_int("Level 3")</code> → 3</td></tr>
+    <tr><td><code>as_bool(v)</code></td><td>Yes/No from text or numbers.</td><td><code>as_bool("x")</code> → True</td></tr>
+    <tr><td><code>fmt(v, decimals=2)</code></td><td>Number to text, no trailing zeros.</td><td><code>fmt(2.50)</code> → "2.5"</td></tr>
+    <tr><td><code>round_to(v, step)</code><br><code>floor_to</code> / <code>ceil_to</code></td><td>Round to a step.</td><td><code>round_to(value, 0.5)</code></td></tr>
+    <tr><td><code>clamp(v, lo, hi)</code></td><td>Limit to a range.</td><td><code>clamp(value, 0, 100)</code></td></tr>
+    <tr><td><code>pad(v, width, "0")</code></td><td>Left-pad.</td><td><code>pad(7, 3)</code> → "007"</td></tr>
+    <tr><td><code>join(sep, *items)</code></td><td>Join, skipping empty items.</td><td><code>join(" - ", a("Number"), a("Name"))</code></td></tr>
+    <tr><td><code>contains(t, sub)</code></td><td>Case-insensitive "in".</td><td><code>contains(value, "temp")</code></td></tr>
+    <tr><td><code>re_find(pat, t, group=0)</code></td><td>Regex search; returns the group or None.</td><td><code>re_find(r"(\d+)", text, 1)</code></td></tr>
+    <tr><td><code>re_test(pat, t)</code></td><td>Regex matches?</td><td><code>re_test(r"^L\d", value)</code></td></tr>
+    <tr><td><code>re_sub(pat, repl, t)</code></td><td>Regex replace (<code>\1</code> for groups).</td><td><code>re_sub(r"^RM-", "", value)</code></td></tr>
+    <tr><td><code>text_of(v)</code></td><td>None-safe text.</td><td><code>text_of(value) + "!"</code></td></tr>
+    <tr><td><code>SKIP</code></td><td>Leave target untouched.</td><td><code>if target: return SKIP</code></td></tr>
+  </table>
+  <p>Also available: <code>floor ceil sqrt pi sin cos tan radians degrees log log10 hypot</code> and
+  <code>abs all any bool dict enumerate filter float int isinstance len list map max min pow range reversed round set sorted str sum tuple zip</code>.
+  Text, list and dict methods work as usual: <code>value.upper()</code>, <code>.strip()</code>, <code>.replace(a, b)</code>, <code>.split()</code>, <code>"{}-{}".format(x, y)</code>.</p>
+</section>
+
+<!-- ======================================================= -->
+<section id="rule-editor">
+  <h2><span class="n">14</span>Rule editor</h2>
+  <table>
+    <tr><th>Part</th><th>Use</th></tr>
+    <tr><td>Header</td><td>The pair and both data types. The rule's result is converted to the target type.</td></tr>
+    <tr><td>Template + <span class="btn">Insert template</span></td><td>Replace the code with a starting point: switch/case, if/then, one-line when, math, round, prefix/suffix, zero-pad, combine parameters, regex, text → Yes/No, don't overwrite, number from text.</td></tr>
+    <tr><td>Code box</td><td>Write the rule. <kbd>Tab</kbd> indents. Right panel is a quick reference.</td></tr>
+    <tr><td><span class="good">✓ Rule is valid</span> line</td><td>Checks as you type. Red means a syntax error or something the sandbox doesn't allow. Orange lines below are <a href="#safety">safety warnings</a>.</td></tr>
+    <tr><td>Incoming value / Current target + <span class="btn">Test</span></td><td>Type a value (interpreted like the source parameter would deliver it) and see the result. <kbd>Enter</kbd> also tests.</td></tr>
+    <tr><td><span class="btn">Sandbox test</span></td><td>Stress-run the rule on many probe values in an isolated thread with a time limit. Results are listed worst first. <a href="#safety">More</a></td></tr>
+    <tr><td><span class="btn">Preview on model</span></td><td>Dry-run on the first 12 linked elements, showing A, B, incoming value and result. Nothing is written.</td></tr>
+    <tr><td><span class="btn">Remove rule</span></td><td>Back to the standard conversion (hidden for pairs that need a rule).</td></tr>
+    <tr><td>☑ Run when the source is empty</td><td>Call the rule with <code>value = None</code> for empty sources. Off by default &mdash; see <a href="#rule-empty">Empty sources</a>. Test, Sandbox test and Preview follow this switch.</td></tr>
+    <tr><td>☑ Rule on for this pair</td><td>Untick to keep the rule but push with the standard conversion. Hidden for pairs that need a rule. A note appears when mapping rules are off for the project.</td></tr>
+    <tr><td><span class="btn pri">Test &amp; save</span></td><td>Runs the sandbox test, then saves the rule into the pair.</td></tr>
+  </table>
+  <p class="note">In <b>Map Parameters</b> the rule is stored when you <b>Apply</b> the mapping; in <b>Mappings</b> when you <b>Save</b>.</p>
+</section>
+
+<!-- ======================================================= -->
+<section id="safety">
+  <h2><span class="n">15</span>Rule safety</h2>
+  <p>Rules run unattended on save and sync, and can arrive in files from other people, so they are sandboxed and guarded in three layers.</p>
+  <h3>Sandbox restrictions</h3>
+  <ul>
+    <li>Not allowed: <code>import</code>, <code>while</code>, <code>def</code>, <code>class</code>, <code>try</code>, <code>with</code>, <code>raise</code>, <code>del</code>, <code>open</code>, <code>eval</code>, <code>exec</code>, <code>getattr</code> and similar.</li>
+    <li>No <code>_private</code> or .NET-style <code>Capitalised</code> attributes; only text/number/list/dict methods.</li>
+    <li>Only plain values go in &mdash; rules can't reach the Revit API or the file system.</li>
+    <li>Comprehensions with more than one <code>for</code> (<code>[x for a in A for b in B]</code>) are refused: Revit's IronPython 2.7
+    silently drops every loop after the first. Write nested <code>for</code> loops instead &mdash; a single <code>for</code> plus any number of <code>if</code>s is fine.</li>
+  </ul>
+  <h3>1 · Static check while you type</h3>
+  <table>
+    <tr><th class="bad">Blocked (can't be saved)</th><th class="warn">Warned</th></tr>
+    <tr><td>Power towers <code>10**10**10</code>, huge powers <code>2**100000</code><br>
+      Huge repetition <code>'x' * 10**9</code><br>
+      Huge shifts <code>1 &lt;&lt; 100000</code><br>
+      <code>range()</code> over 10,000<br>
+      Huge or computed format widths <code>'%0999999d'</code>, <code>'{:>{w}}'</code><br>
+      Lambdas that call themselves or a passed-in function<br>
+      <code>items[0] *= …</code> (use <code>items[0] = items[0] * …</code>)</td>
+    <td>Exponent from data <code>2 ** value</code><br>
+      Repetition by data <code>'-' * value</code><br>
+      Nested loops<br>
+      Regex with nested repetition <code>(a+)+</code><br>
+      Very long rules</td></tr>
+  </table>
+  <h3>2 · Runtime guards</h3>
+  <p>Every rule is compiled with checks around arithmetic, text building, loops, method calls and regex. If a limit is hit,
+  that element is reported as a rule error and the save continues. See <a href="#limits">Limits</a>.</p>
+  <h3>3 · Sandbox test</h3>
+  <p>Runs the rule on a background thread, at most 3 seconds, with probe values matched to the source type, each with and
+  without an existing target value:</p>
+  <table>
+    <tr><td>Numbers</td><td>empty, 0, 1, −1, 2.5, 0.000001, ±1,000,000, 1e15</td></tr>
+    <tr><td>Integers</td><td>empty, 0, 1, −1, 7, ±1,000,000</td></tr>
+    <tr><td>Yes/No</td><td>empty, Yes, No</td></tr>
+    <tr><td>Text / elements</td><td>empty, "", "abc", "A-101", "Level 3", "123", "&nbsp;&nbsp;padded&nbsp;&nbsp;", 2,000 characters</td></tr>
+  </table>
+  <p>Plus whatever you typed in <i>Incoming value</i>. Verdicts:</p>
+  <ul>
+    <li><span class="good">✓ passed</span> &mdash; every probe ran fine.</li>
+    <li><span class="warn">⚠ errors</span> &mdash; some probes raised errors (often <code>None</code> when the source is empty). Saving is allowed; add an <code>if</code> if your data can look like that.</li>
+    <li><span class="bad">⛔ guard tripped</span> &mdash; saving needs <b>Save anyway</b>.</li>
+    <li><span class="bad">⛔ didn't finish</span> &mdash; can't be saved.</li>
+  </ul>
+  <p class="tip">Empty values are only probed when the pair has <i>Run when the source is empty</i> ticked &mdash; then handle <code>None</code> first, e.g. <code>if value is None: return SKIP</code>.</p>
+</section>
+
+<!-- ======================================================= -->
+<section id="cookbook">
+  <h2><span class="n">16</span>Rule cookbook</h2>
+  <details open><summary>Room number → door mark with a suffix</summary>
+<pre><code># Rooms → Doors, Room → elements in room, Number → Mark
+"{}{}".format(value, b("Door Suffix") or "A")</code></pre></details>
+  <details><summary>Upper-case department, "N/A" when empty</summary>
+<pre><code>value.upper() if value else "N/A"</code></pre></details>
+  <details><summary>Area bands from a room area</summary>
+<pre><code>if value is None:
+    return SKIP
+value = when(value &lt; 100, "Small", value &lt; 500, "Medium", "Large")</code></pre></details>
+  <details><summary>Fill only empty targets</summary>
+<pre><code>if target not in (None, ""):
+    return SKIP</code></pre></details>
+  <details><summary>Text code → Yes/No ("FR" in the name means fire-rated)</summary>
+<pre><code>contains(value, "FR") or re_test(r"\b\d+\s*(HR|MIN)\b", text)</code></pre></details>
+  <details><summary>Strip a prefix and zero-pad</summary>
+<pre><code>pad(to_int(re_sub(r"^RM-?", "", value), 0), 3)</code></pre></details>
+  <details><summary>Combine level and number</summary>
+<pre><code>join("-", re_find(r"(\d+)", a("Level"), 1), a("Number"))</code></pre></details>
+  <details><summary>Map a finish code to a description</summary>
+<pre><code>value = switch(value, {
+    "PT-1": "Paint, eggshell",
+    "PT-2": "Paint, semi-gloss",
+    "VCT":  "Vinyl composition tile",
+}, default=value)</code></pre></details>
+  <details><summary>Length → text in another unit</summary>
+<pre><code># value is in display units; in an imperial project that's feet
+"{} mm".format(fmt(value * 304.8, 0))</code></pre></details>
+  <details><summary>Sheet number → view parameter (Sheet → placed views)</summary>
+<pre><code>"See {}".format(value)</code></pre></details>
+</section>
+
+<!-- ======================================================= -->
+<section id="storage">
+  <h2><span class="n">17</span>Where settings live</h2>
+  <ul>
+    <li>All mappings, rules and automatic-run settings are one JSON entity on a <code>DataStorage</code> element named <code>PyPiPie_ParamPusher</code> (original identifiers, kept so existing projects keep their mappings).</li>
+    <li>Extensible Storage schema <code>PyPiPieParamPusher</code>, GUID <code>6b1f6a42-2f6e-4c0e-9a9e-5d3f3f7f1b21</code>, public read/write.</li>
+    <li>Saving mappings is a normal transaction (undoable) and syncs to central like any element.</li>
+    <li>Push log: <code>%APPDATA%\pyRevit\DataPusher\push.log</code> (reset at 512 KB).</li>
+  </ul>
+</section>
+
+<!-- ======================================================= -->
+<section id="limits">
+  <h2><span class="n">18</span>Limits</h2>
+  <table>
+    <tr><th>Limit</th><th>Value</th></tr>
+    <tr><td>Run time per element</td><td>0.5 s</td></tr>
+    <tr><td>Run time per rule per push</td><td>15 s (then the rule stops for the rest of that push)</td></tr>
+    <tr><td>Loop iterations per element</td><td>100,000</td></tr>
+    <tr><td><code>range()</code> size</td><td>10,000</td></tr>
+    <tr><td>Text / list length</td><td>1,000,000 items</td></tr>
+    <tr><td>Total built per element</td><td>20,000,000 characters/items</td></tr>
+    <tr><td>Integer size</td><td>4,096 bits (about 1,230 digits)</td></tr>
+    <tr><td>Padding / format width</td><td>10,000</td></tr>
+    <tr><td>Regex call</td><td>0.25 s</td></tr>
+    <tr><td>Sandbox test</td><td>3 s</td></tr>
+    <tr><td>Parameter discovery</td><td>first 60 elements of a category (plus their types)</td></tr>
+  </table>
+</section>
+
+<!-- ======================================================= -->
+<section id="troubleshooting">
+  <h2><span class="n">19</span>Troubleshooting</h2>
+  <details open><summary>Nothing happens on save</summary>
+    Check <b>Mappings → Run automatically</b>, that the mapping and its pairs are enabled, and look at
+    <code>%APPDATA%\pyRevit\DataPusher\push.log</code>. Hooks need pyRevit loaded with the extension enabled.</details>
+  <details><summary>A parameter I need isn't in the list</summary>
+    Only parameters found on the first 60 elements (and their types) are listed. If the category has no elements yet, place one.
+    Column B hides parameters that are read-only on any sampled element (see <a href="#read-only">Read-only targets</a>).</details>
+  <details><summary>"No related source" for many targets</summary>
+    The relationship didn't find an A element. Rooms: is the element inside a placed room in its phase? Keys: do the values really match (spaces, prefixes)?</details>
+  <details><summary>Many "Blocked"</summary>
+    Those elements are borrowed by someone else or changed in central. Reload Latest or ask the owner to sync, then push again.</details>
+  <details><summary>Conflicts on a type parameter</summary>
+    Instances of one type have different source values. Push into an instance parameter instead, or use a rule that resolves it.</details>
+  <details><summary>Lengths come out in the wrong unit</summary>
+    Conversions use <b>Project Units</b>. In a rule, <code>value</code> is already in display units. Check the unit settings for that data type.</details>
+  <details><summary>A rule works in Test but fails in the push</summary>
+    Use <b>Preview on model</b> to see real values. Common causes: empty sources (<code>None</code>), text where you expected a number (use <code>num()</code>), or element names that don't exist in the project.</details>
+  <details><summary>Nothing was pushed during print/export</summary>
+    Revit didn't allow changes during that event; it's logged. Run <b>Push Now</b> first.</details>
+  <details><summary>Dialogs aren't dark</summary>
+    Theme following needs Revit 2024 or later. Dialogs pick up the theme when they open.</details>
+</section>
+</main>
+</div>
+<script>
+(function(){
+  var root=document.documentElement;
+  window.addEventListener("load",function(){ setTimeout(function(){ root.classList.add("smooth"); },300); });
+  function setTheme(t){ if(t){root.setAttribute("data-theme",t);} else {root.removeAttribute("data-theme");}
+    try{ if(t){localStorage.setItem("datapusher-theme",t);} else {localStorage.removeItem("datapusher-theme");} }catch(e){} }
+  var t=null;
+  // theme handed over by the dialog that opened help (window.name survives the redirect)
+  if(/^datapusher-(dark|light)$/.test(window.name||"")){ t=window.name.slice(11); }
+  else { try{ t=localStorage.getItem("datapusher-theme"); }catch(e){} }
+  if(t){ root.setAttribute("data-theme",t); }
+  document.querySelectorAll("nav .theme button").forEach(function(b){
+    b.addEventListener("click",function(){ window.name=""; setTheme(b.getAttribute("data-t")); });
+  });
+  // highlight current section in the table of contents
+  var links={}; document.querySelectorAll("#toc a").forEach(function(a){ links[a.getAttribute("href").slice(1)]=a; });
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){
+        Object.keys(links).forEach(function(k){ links[k].classList.toggle("on",k===e.target.id); }); } });
+    },{rootMargin:"0px 0px -70% 0px"});
+    document.querySelectorAll("main section").forEach(function(s){ io.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,8 +1,8 @@
-# PyPiPie · Parameter Pusher for Revit
+# Data Pusher · Parameter Pusher for Revit
 
 **Push parameter values between Revit elements — automatically on save, sync, print and export.**
 
-PyPiPie is a [pyRevit](https://github.com/pyrevitlabs/pyRevit) extension. You map parameters from one category to
+Data Pusher is a [pyRevit](https://github.com/pyrevitlabs/pyRevit) extension. You map parameters from one category to
 another (Rooms → Doors, Sheets → Views, Walls → Windows …) or between parameters of the same element. You can add
 small, sandboxed Python rules that transform values along the way. Mappings are stored inside the project, so they
 travel with the model and run for everyone on the team.
@@ -45,7 +45,7 @@ travel with the model and run for everyone on the team.
 | 🔁 **Same category** | Copy one parameter into another on the same element, including instance ↔ type. |
 | ✅ **Type-safe pairing** | Every pair is graded as *exact*, *converts*, *lossy* or *incompatible*, with unit-aware conversion based on Project Units. |
 | 🔒 **Read-only filtering** | Targets that Revit won't let you write are hidden. Each element is re-checked at push time. |
-| ƒ **Mapping rules** | Python snippets for switch/case, math, if/then, regex, combining parameters. Comes with templates, a Test box, a model preview and a sandbox test. |
+| ƒ **Mapping rules (optional)** | Python snippets for switch/case, math, if/then, regex, combining parameters. Off unless the project uses them; switch rules on or off per project and per pair. Comes with templates, a Test box, a model preview and a sandbox test. |
 | 🛡️ **Pathological-rule protection** | A static check, runtime guards and a timed sandbox test keep a rule from ever stalling Revit. |
 | ⚙️ **Hands-off** | Runs silently on save, save-as, sync, print and export. Unchanged values are never rewritten. Workshared models are handled for you. |
 | 📦 **Portable** | Settings are stored in Extensible Storage. Mappings import and export as JSON between projects. |
@@ -69,20 +69,20 @@ travel with the model and run for everyone on the team.
 
 ### Option A — pyRevit CLI
 ```bash
-pyrevit extend ui PyPiPie https://github.com/<your-account>/PyPiPie.git --branch=main
+pyrevit extend ui DataPusher https://github.com/<your-account>/DataPusher.git --branch=main
 ```
 
 ### Option B — manual
-1. Download or clone this repository into a folder, keeping the folder name **`PyPiPie.extension`**.
+1. Download or clone this repository into a folder, keeping the folder name **`DataPusher.extension`**.
 2. In Revit: **pyRevit → Settings → Custom Extension Directories → Add** the *parent* folder.
-3. Click **Reload**. A **PyPiPie** tab appears with the **Param Pusher** panel.
+3. Click **Reload**. A **Parameter Pusher** tab appears with the **Parameter Pusher** panel.
 
 | Button | Does |
 |---|---|
 | **Map Parameters** | Build mappings: pick categories, pair parameters, apply. |
-| **Mappings** | Review, enable/disable, edit, delete, import/export, push, and set automatic-run options. |
+| **Mappings** | One scrolling tree: each category pairing with its parameter pairs. Filter, enable/disable, edit, push, delete, rules, merge duplicates, import/export, automatic-run options. |
 | **Push Now** | Run all enabled mappings and show the results (<kbd>Shift</kbd>+click runs silently). |
-| **Help** | Opens the full HTML guide (`help/PyPiPie_Help.html`). |
+| **Help** | Opens the full HTML guide (`help/DataPusher_Help.html`). |
 
 ---
 
@@ -101,7 +101,14 @@ Copy each room's **Department** onto the doors in that room:
 
 ## How it works
 
-A **mapping** is *category A + category B + relationship + parameter pairs*. Each pair can carry an optional rule.
+A **mapping** is one *category pairing* (category A + category B + relationship) holding any number of parameter
+pairs. Each pair can carry an optional rule. There is only ever one mapping per pairing:
+
+- Picking categories and a relationship that already have a mapping adds your pairs to it. Column B marks the targets
+  it already feeds, and a target fed by a different source asks you to **Replace** or **Keep existing**.
+- Imports fold into matching pairings too.
+- **Merge duplicates** in the Mappings window combines pairings that are split over several mappings, without changing what gets pushed.
+- Elements are collected and related once per pairing rather than once per pair, which makes pushes faster.
 
 ### Relationships
 
@@ -134,6 +141,12 @@ and the rest are reported as *conflicts*.
 ---
 
 ## Mapping rules
+
+Rules are optional. Most pairs push with the standard conversion and need no Python.
+
+- **Project switch:** *Mapping rules (ƒ)* in the Mappings window. It's off in projects without rules. When off, rules are kept but never run, ƒ buttons are hidden on pairs without a rule, and the rule engine isn't loaded during save or sync.
+- **Per pair:** right-click **ƒ** → *Rule on for this pair*, or use the checkbox in the rule editor.
+- **The ƒ button shows the state:** faint means no rule, filled means the rule is active, struck through means the rule is kept but switched off (accent outline) or rules are off for the project (dim).
 
 Click **ƒ** on any pair. A rule is either one expression or a short script that sets or returns `value`:
 
@@ -193,8 +206,8 @@ Rules run unattended and can arrive in files from other people, so they are sand
 
 ## Automatic runs
 
-- Hooks: `doc-saving`, `doc-saving-as`, `doc-syncing`, `doc-printing`, `doc-exporting`. Each can be toggled in **Mappings**.
-- Runs are silent. A summary goes to `%APPDATA%\pyRevit\PyPiPie\push.log`.
+- Hooks: `doc-saving`, `doc-saving-as`, `doc-syncing`, `doc-printing`, `file-exporting`. Each can be toggled in **Mappings**.
+- Runs are silent. A summary goes to `%APPDATA%\pyRevit\DataPusher\push.log`.
 - Unchanged values are skipped, so elements aren't borrowed needlessly.
 - Workshared: elements owned by others, or updated in central, are skipped and reported as *blocked*.
 - Warnings are suppressed. A run that changes nothing leaves no undo entry.
@@ -209,22 +222,23 @@ Mappings, rules and settings export to JSON. Categories are identified by `Built
 mapping with the same id is replaced) or **Replace all**, and it warns when the file contains rules.
 
 Storage: one JSON entity on a `DataStorage` element `PyPiPie_ParamPusher`, schema `PyPiPieParamPusher`,
-GUID `6b1f6a42-2f6e-4c0e-9a9e-5d3f3f7f1b21`.
+GUID `6b1f6a42-2f6e-4c0e-9a9e-5d3f3f7f1b21`. These identifiers come from the extension's
+original name (PyPiPie) and are deliberately unchanged, so projects that already store mappings keep them.
 
 ---
 
 ## Project layout
 
 ```
-PyPiPie.extension/
-├── PyPiPie.tab/
-│   └── Param Pusher.panel/
+DataPusher.extension/
+├── Parameter Pusher.tab/                ribbon tab
+│   └── Parameter Pusher.panel/
 │       ├── Map Parameters.pushbutton/   mapping editor
 │       ├── Mappings.pushbutton/         report / manager
 │       ├── Push Now.pushbutton/         manual run
 │       └── Help.pushbutton/             opens the HTML guide
-├── hooks/                               doc-saving, doc-saving-as, doc-syncing, doc-printing, doc-exporting
-├── lib/pypipie/
+├── hooks/                               doc-saving, doc-saving-as, doc-syncing, doc-printing, file-exporting
+├── lib/pypipie/                          Python package (original name kept)
 │   ├── revitutil.py     ids, categories, parameter refs, writability
 │   ├── convert.py       compatibility grading + value conversion
 │   ├── relations.py     how B elements find their A element
@@ -237,8 +251,8 @@ PyPiPie.extension/
 │   ├── mapper.py        Map Parameters dialog
 │   ├── manager.py       Mappings dialog
 │   └── rule_editor.py   rule editor
-├── help/PyPiPie_Help.html   full user guide (opened by ? / F1)
-├── tests/test_rules.py      sandbox + guard tests (pure Python)
+├── help/DataPusher_Help.html  full user guide (opened by ? / F1)
+├── tests/                   sandbox, guard and grouping tests (pure Python)
 └── docs/images/
 ```
 
@@ -248,11 +262,15 @@ PyPiPie.extension/
 
 - Code targets **IronPython 2.7** (pyRevit's default engine) and avoids Python-3-only syntax.
 - The dialogs are WPF, built from XAML strings. All controls are restyled from theme brushes, so dark mode is complete.
-- `rules.py` and `guard.py` import Revit lazily, so the sandbox can be tested with plain CPython:
+- `rules.py`, `guard.py` and `storage.py`'s grouping logic don't need Revit, so they're tested with plain CPython
+  **and** with IronPython 2.7 (the engine Revit actually runs). IronPython's `ast` module differs from CPython's (for
+  example it drops the second `for` of a comprehension), so run both before release:
 
 ```bash
 cd lib
 python -m pytest ../tests -q      # or: python ../tests/test_rules.py
+ipy ../tests/test_rules.py        # IronPython 2.7 (mono ipy.exe on Linux/macOS)
+ipy ../tests/test_storage.py
 ```
 
 - Pull requests are welcome. Please keep the hooks silent (no UI) and run the tests before submitting.
@@ -280,4 +298,3 @@ More in the built-in help (**Help** button, or **?** / F1 in any dialog).
 ## License
 
 _Add a license before publishing (for example MIT) and place it in `LICENSE`._
-
