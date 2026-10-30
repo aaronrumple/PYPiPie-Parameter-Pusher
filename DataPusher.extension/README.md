@@ -41,7 +41,7 @@ travel with the model and run for everyone on the team.
 
 | | |
 |---|---|
-| 🔗 **Category → category** | Push between any two categories through 11 relationships: room, space, level, host, sheet, dependent view, nested family, assembly, group, matching key, or same element. |
+| 🔗 **Category → category** | Push between any two categories through 12 relationships: room, space, level, host, sheet, dependent view, parent → nested, nested → parent, assembly, group, matching key, or same element. |
 | 🔁 **Same category** | Copy one parameter into another on the same element, including instance ↔ type. |
 | ✅ **Type-safe pairing** | Every pair is graded as *exact*, *converts*, *lossy* or *incompatible*, with unit-aware conversion based on Project Units. |
 | 🔒 **Read-only filtering** | Targets that Revit won't let you write are hidden. Each element is re-checked at push time. |
@@ -122,7 +122,8 @@ pairs. Each pair can carry an optional rule. There is only ever one mapping per 
 | Level → elements on level | Levels | other | `LevelId`, level parameters, or the view's level |
 | Sheet → placed views | Sheets | Views | views placed on the sheet |
 | Parent view → dependent views | Views | Views | primary view |
-| Parent family → nested | any | any | shared nested instance → parent |
+| Parent family → nested | any | any | shared nested instance ← its parent (`SuperComponent`) |
+| Nested → parent family | any | any | parent ← its one nested A instance (`GetSubComponentIds`); several = ambiguous, skipped |
 | Assembly → members | Assemblies | other | `AssemblyInstanceId` |
 | Group → members | Model/Detail Groups | other | `GroupId` |
 

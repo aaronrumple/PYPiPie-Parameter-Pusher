@@ -636,7 +636,7 @@ def preview(doc, mapping, pair, code, limit=12):
     from pypipie import relations
     fn = compile_rule(code)  # raises RuleError
     units = cv.Units(doc)
-    stats = {"unmatched": 0, "ambiguous": 0, "errors": []}
+    stats = {"unmatched": 0, "ambiguous": 0, "not_applicable": 0, "errors": []}
     a_elems = ru.collect_instances(doc, mapping["cat_a"])
     b_elems = a_elems if mapping["cat_a"] == mapping["cat_b"] else ru.collect_instances(doc, mapping["cat_b"])
     links = relations.build_pairs(doc, mapping, a_elems, b_elems, stats)

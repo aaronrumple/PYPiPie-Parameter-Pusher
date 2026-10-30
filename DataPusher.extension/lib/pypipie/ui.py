@@ -672,7 +672,7 @@ _REPORT_BODY = u'''
 
 class PushReportWindow(ThemedWindow):
     def __init__(self, report):
-        ThemedWindow.__init__(self, _REPORT_BODY, "Push results", width=760, height=460,
+        ThemedWindow.__init__(self, _REPORT_BODY, "Push results", width=900, height=520,
                               help_topic="push-report")
         self.close_b.Click += lambda s, e: self.Close()
         self.head.Text = u"{} value(s) updated".format(report.get("updated", 0))
@@ -691,22 +691,23 @@ class PushReportWindow(ThemedWindow):
             bad = st["failed"] or st["errors"] or st.get("rule_errors")
             warn = st["blocked"] or st["conflicts"] or st["ambiguous"] or st["missing_dst"]
             notes = []
+            if st.get("not_applicable"):
+                notes.append(u"{} B element(s) can't take part (no parent / nothing nested)".format(
+                    st["not_applicable"]))
             if st["unmatched"]:
                 notes.append("{} target(s) had no related source".format(st["unmatched"]))
             if st["ambiguous"]:
-                notes.append("{} ambiguous key match(es)".format(st["ambiguous"]))
-            if st["missing_src"] or st["missing_dst"]:
-                notes.append("parameter missing on {} source / {} target".format(
-                    st["missing_src"], st["missing_dst"]))
-            if st["readonly"]:
-                notes.append("{} read-only target(s)".format(st["readonly"]))
+                notes.append("{} ambiguous match(es) skipped".format(st["ambiguous"]))
             if st["blocked"]:
                 notes.append("blocked = owned by another user or out of date")
-            if st.get("rule_skipped"):
-                notes.append("{} skipped by rule".format(st["rule_skipped"]))
-            if st.get("rule_errors"):
-                notes.append("{} rule error(s)".format(st["rule_errors"]))
-            notes.extend(st["errors"])
+            pair_rows = st.get("pairs") or []
+            if not pair_rows:  # older report shape: keep the totals in the notes
+                if st["missing_src"] or st["missing_dst"]:
+                    notes.append("parameter missing on {} source / {} target".format(
+                        st["missing_src"], st["missing_dst"]))
+                if st["readonly"]:
+                    notes.append("{} read-only target(s)".format(st["readonly"]))
+            notes.extend(e for e in st["errors"] if not e.startswith(u"Skipped '"))
             row = columns([
                 two_line(st["name"], u" · ".join(notes), "Bad" if bad else ("Warn" if warn else "Sub")),
                 tb(str(st["targets"])), tb(str(st["updated"]), "Good" if st["updated"] else "Fg", bold=True),
@@ -716,6 +717,47 @@ class PushReportWindow(ThemedWindow):
                 tb(str(st["conflicts"]), "Warn" if st["conflicts"] else "Fg")],
                 ["3*", 58, 62, 50, 52, 54, 60, 62])
             self.rows.Items.Add(lb_item(row))
+            for ps in pair_rows:
+                self.rows.Items.Add(lb_item(_pair_report_row(ps)))
+
+
+def _pair_report_row(ps):
+    """Indented per-pair line under a mapping in the push results."""
+    why = []
+    if ps.get("note"):
+        why.append((ps["note"], "Bad"))
+    if ps["missing_dst"]:
+        why.append((u"{} target(s) don't have this parameter".format(ps["missing_dst"]), "Warn"))
+    if ps["missing_src"]:
+        why.append((u"{} source(s) don't have this parameter".format(ps["missing_src"]), "Warn"))
+    if ps["readonly"]:
+        why.append((u"{} read-only on the target (often driven by a family association)".format(ps["readonly"]),
+                    "Warn"))
+    if ps["conflicts"]:
+        why.append((u"{} conflicting: several sources write one shared target "
+                    u"(e.g. one nested type)".format(ps["conflicts"]), "Warn"))
+    if ps["rule_skipped"]:
+        why.append((u"{} skipped by rule".format(ps["rule_skipped"]), "Sub"))
+    if ps["rule_errors"]:
+        why.append((u"{} rule error(s)".format(ps["rule_errors"]), "Bad"))
+    brush = "Sub"
+    for _t, b in why:
+        if b == "Bad":
+            brush = "Bad"
+            break
+        if b == "Warn":
+            brush = "Warn"
+    label = two_line(u"\u2514 " + ps["label"], u" \u00b7 ".join(t for t, _b in why), brush)
+    label.Margin = Thickness(14, 0, 0, 0)
+    row = columns([
+        label, tb(u""),
+        tb(str(ps["updated"]), "Good" if ps["updated"] else "Sub"),
+        tb(str(ps["unchanged"]), "Sub"), tb(str(ps["empty"]), "Sub"),
+        tb(str(ps["failed"]), "Bad" if ps["failed"] else "Sub"),
+        tb(str(ps["blocked"]), "Warn" if ps["blocked"] else "Sub"),
+        tb(str(ps["conflicts"]), "Warn" if ps["conflicts"] else "Sub")],
+        ["3*", 58, 62, 50, 52, 54, 60, 62])
+    return row
 
 
 def show_push_report(report):

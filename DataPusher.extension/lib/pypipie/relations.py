@@ -69,6 +69,10 @@ RELATIONS = [
     Relation("super", "Parent family -> nested",
              "Shared nested family instances receive values from their parent instance "
              "(same or different category).", allow_same=True),
+    Relation("sub", "Nested -> parent family",
+             "Parent family instances receive values from the shared nested instance inside them "
+             "(same or different category). A parent with several nested A elements is skipped as ambiguous.",
+             allow_same=True),
     Relation("dependent", "Parent view -> dependent views",
              "Dependent views receive values from their parent (primary) view.",
              cat_a="OST_Views", cat_b="OST_Views", allow_same=True),
@@ -210,15 +214,28 @@ def build_pairs(doc, mapping, a_elems, b_elems, stats):
     pairs = []
     a_by_id = dict((ru.eid_val(a.Id), a) for a in a_elems)
 
-    def via(getter):
+    def bump(key):
+        stats[key] = stats.get(key, 0) + 1
+
+    def via(getter, not_applicable=None):
+        """getter(b) -> id of b's A element. not_applicable(b) -> True when b can't have one at
+        all (e.g. a top-level family for Parent -> nested); those aren't counted as unmatched."""
         for b in b_elems:
+            if not_applicable is not None:
+                try:
+                    na = not_applicable(b)
+                except Exception:
+                    na = False
+                if na:
+                    bump("not_applicable")
+                    continue
             try:
                 sid = getter(b)
             except Exception:
                 sid = None
             src = a_by_id.get(ru.eid_val(sid)) if sid is not None else None
             if src is None:
-                stats["unmatched"] += 1
+                bump("unmatched")
             else:
                 pairs.append((src, b))
 
@@ -279,7 +296,25 @@ def build_pairs(doc, mapping, a_elems, b_elems, stats):
                 pairs.append((s, b))
 
     elif rel == "super":
-        via(lambda b: b.SuperComponent.Id if getattr(b, "SuperComponent", None) is not None else None)
+        via(lambda b: b.SuperComponent.Id,
+            not_applicable=lambda b: getattr(b, "SuperComponent", None) is None)
+
+    elif rel == "sub":
+        for b in b_elems:
+            try:
+                kids = list(b.GetSubComponentIds())
+            except Exception:  # not a family instance
+                kids = []
+            if not kids:
+                bump("not_applicable")  # nothing nested in it
+                continue
+            hits = [a_by_id[ru.eid_val(k)] for k in kids if ru.eid_val(k) in a_by_id]
+            if not hits:
+                bump("unmatched")
+            elif len(hits) > 1:
+                bump("ambiguous")
+            else:
+                pairs.append((hits[0], b))
 
     elif rel == "dependent":
         via(lambda b: b.GetPrimaryViewId() if ru.is_valid_id(b.GetPrimaryViewId()) else None)

@@ -46,10 +46,22 @@ def _new_stats(mapping):
         "name": mapping.get("name", "?"),
         "targets": 0, "updated": 0, "unchanged": 0, "empty": 0,
         "failed": 0, "blocked": 0, "readonly": 0, "conflicts": 0,
-        "missing_src": 0, "missing_dst": 0, "unmatched": 0, "ambiguous": 0,
+        "missing_src": 0, "missing_dst": 0, "unmatched": 0, "ambiguous": 0, "not_applicable": 0,
         "rule_skipped": 0, "rule_errors": 0,
         "errors": [],
+        "pairs": [],   # per-pair counts, see _new_pair_stats
     }
+
+
+PAIR_KEYS = ("updated", "unchanged", "empty", "failed", "blocked", "readonly", "conflicts",
+             "missing_src", "missing_dst", "rule_skipped", "rule_errors")
+
+
+def _new_pair_stats(pair):
+    d = dict((k, 0) for k in PAIR_KEYS)
+    d["label"] = u"{} \u2192 {}".format(ru.ref_label(pair["src"]), ru.ref_label(pair["dst"]))
+    d["note"] = u""
+    return d
 
 
 class _Editability(object):
@@ -110,7 +122,15 @@ def _run_mapping(doc, mapping, settings, units, editable, rule_cache=None):
 
     for pi, pair in enumerate(pairs_cfg):
         src_ref, dst_ref = pair["src"], pair["dst"]
+        ps = _new_pair_stats(pair)
+        st["pairs"].append(ps)
+
+        def inc(key, ps=ps):
+            st[key] += 1
+            ps[key] += 1
+
         if relations.is_self_pair(mapping.get("relation"), src_ref, dst_ref):
+            ps["note"] = u"skipped: pushes onto itself on the same element"
             st["errors"].append(u"Skipped '{}' -> itself on the same element.".format(ru.ref_label(src_ref)))
             continue
         fn = None
@@ -120,12 +140,14 @@ def _run_mapping(doc, mapping, settings, units, editable, rule_cache=None):
                 rule_cache["cache"] = rules.RuleCache()
             fn, rerr = rule_cache["cache"].get(pair["rule"].strip())
             if rerr is not None:
+                ps["note"] = u"rule not run: {}".format(rerr)
                 st["errors"].append(u"Rule on '{}' not run: {}".format(ru.ref_label(dst_ref), rerr))
                 continue
         elif cv.classify(src_ref, dst_ref)[0] == cv.INCOMPATIBLE:
             why = {storage.RULE_NONE: "needs a rule",
                    storage.RULE_OFF: "its rule is switched off",
                    storage.RULE_GLOBAL_OFF: "mapping rules are turned off for this project"}
+            ps["note"] = u"skipped: " + why[storage.rule_state(settings, pair)]
             st["errors"].append(u"Skipped '{}' -> '{}': {}.".format(
                 ru.ref_label(src_ref), ru.ref_label(dst_ref), why[storage.rule_state(settings, pair)]))
             continue
@@ -135,18 +157,18 @@ def _run_mapping(doc, mapping, settings, units, editable, rule_cache=None):
             src_host = host_of(a, src_ref.get("type"))
             dst_host = host_of(b, dst_ref.get("type"))
             if src_host is None or dst_host is None:
-                st["missing_src" if src_host is None else "missing_dst"] += 1
+                inc("missing_src" if src_host is None else "missing_dst")
                 continue
             sp = ru.find_param(src_host, src_ref)
             if sp is None:
-                st["missing_src"] += 1
+                inc("missing_src")
                 continue
             dp = ru.find_param(dst_host, dst_ref)
             if dp is None:
-                st["missing_dst"] += 1
+                inc("missing_dst")
                 continue
             if not ru.writable(dp, dst_host):
-                st["readonly"] += 1
+                inc("readonly")
                 continue
 
             if fn is not None and not pair.get("rule_empty") and cv.is_empty(sp):
@@ -158,14 +180,14 @@ def _run_mapping(doc, mapping, settings, units, editable, rule_cache=None):
                     break
                 status, value, res = rules.evaluate(fn, units, a, b, sp, dp, dst_ref)
                 if status == "error":
-                    st["rule_errors"] += 1
+                    inc("rule_errors")
                     if first_rule_error[0] is None:
                         first_rule_error[0] = res
                         st["errors"].append(u"Rule on '{}' failed for {} '{}': {}".format(
                             ru.ref_label(dst_ref), ru.eid_val(b.Id), ru.element_name(b), res))
                     continue
                 if status == "skip":
-                    st["rule_skipped"] += 1
+                    inc("rule_skipped")
                     continue
             else:
                 try:
@@ -174,36 +196,36 @@ def _run_mapping(doc, mapping, settings, units, editable, rule_cache=None):
                     status, value = "fail", None
             if status == "empty":
                 if not push_empty:
-                    st["empty"] += 1
+                    inc("empty")
                     continue
                 value = cv.blank_for(dp)
                 if value is None:
-                    st["empty"] += 1
+                    inc("empty")
                     continue
             elif status != "ok":
-                st["failed"] += 1
+                inc("failed")
                 continue
 
             tid = ru.eid_val(dst_host.Id)
             if tid in written:
                 if not cv.values_equal(written[tid], value):
-                    st["conflicts"] += 1  # e.g. two instances disagree on a type value
+                    inc("conflicts")  # e.g. two instances disagree on a type value
                 continue
             written[tid] = value
 
             if cv.values_equal(cv.raw_value(dp), value):
-                st["unchanged"] += 1
+                inc("unchanged")
                 continue
             if not editable.ok(dst_host.Id):
-                st["blocked"] += 1
+                inc("blocked")
                 continue
             try:
                 if cv.set_value(dp, value):
-                    st["updated"] += 1
+                    inc("updated")
                 else:
-                    st["failed"] += 1
+                    inc("failed")
             except Exception:
-                st["failed"] += 1
+                inc("failed")
     return st
 
 
@@ -276,6 +298,10 @@ def summarise(report):
         lines.append("  {name}: {targets} linked, {updated} updated, {unchanged} unchanged, "
                      "{failed} failed, {blocked} blocked, {conflicts} conflicts, "
                      "{rule_skipped} skipped by rule, {rule_errors} rule errors".format(**st))
+        for ps in st.get("pairs", []):
+            lines.append(u"    {label}: {updated} updated, {unchanged} same, {empty} empty, {failed} failed, "
+                         u"{readonly} read-only, {missing_dst} missing on target, {conflicts} conflicts".format(**ps)
+                         + (u" ({})".format(ps["note"]) if ps["note"] else u""))
         for e in st["errors"]:
             lines.append("    ! " + e)
     return lines

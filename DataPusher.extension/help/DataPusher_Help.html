@@ -271,7 +271,8 @@ details summary{cursor:pointer;font-weight:600}
     <tr><td><b>Level → elements on level</b></td><td>Levels</td><td>other</td><td>Element level, reference/base level parameters, or a view's level.</td></tr>
     <tr><td><b>Sheet → placed views</b></td><td>Sheets</td><td>Views</td><td>Views placed on the sheet.</td></tr>
     <tr><td><b>Parent view → dependent views</b></td><td>Views</td><td>Views</td><td>Dependent views get values from their primary view.</td></tr>
-    <tr><td><b>Parent family → nested</b></td><td>any</td><td>any</td><td>Shared nested instances get values from their parent instance.</td></tr>
+    <tr><td><b>Parent family → nested</b></td><td>any</td><td>any</td><td>Shared nested instances get values from their parent instance. Top-level instances in B have no parent and are counted as <i>can't take part</i>, not as a problem.</td></tr>
+    <tr><td><b>Nested → parent family</b></td><td>any</td><td>any</td><td>Parent instances get values from the shared nested instance of category A inside them (e.g. a connector's load back up to the fixture). A parent with <b>several</b> nested A instances is skipped as <i>ambiguous</i>; one with none is <i>can't take part</i>.</td></tr>
     <tr><td><b>Assembly → members</b></td><td>Assemblies</td><td>other</td><td>Members of the assembly.</td></tr>
     <tr><td><b>Group → members</b></td><td>Model/Detail Groups</td><td>other</td><td>Members of the group.</td></tr>
   </table>
@@ -409,8 +410,12 @@ details summary{cursor:pointer;font-weight:600}
     <tr><td class="warn">Blocked</td><td>Owned by another user or out of date with central.</td></tr>
     <tr><td class="warn">Conflict</td><td>Several sources disagreed about one type parameter.</td></tr>
   </table>
-  <p>The line under each mapping name adds: targets with no related source, ambiguous key matches, parameters missing
-  on some elements, read-only targets, values skipped by a rule, rule errors and other errors.</p>
+  <p>The line under each mapping name adds: B elements that can't take part (e.g. no parent), targets with no related
+  source, ambiguous matches, and errors.</p>
+  <p>Under each mapping there is a row <b>per parameter pair</b> (<i>└ Source → Target</i>) with its own counts and the reason
+  for anything that didn't update: target doesn't have the parameter, read-only on the target (often because a family
+  association already drives it), conflicting sources writing one shared target (such as one nested family type), rule
+  errors, or why the pair was skipped. The push log has the same per-pair lines.</p>
 </section>
 
 <!-- ======================================================= -->
@@ -673,6 +678,11 @@ value = when(value &lt; 100, "Small", value &lt; 500, "Medium", "Large")</code><
     The relationship didn't find an A element. Rooms: is the element inside a placed room in its phase? Keys: do the values really match (spaces, prefixes)?</details>
   <details><summary>Many "Blocked"</summary>
     Those elements are borrowed by someone else or changed in central. Reload Latest or ask the owner to sync, then push again.</details>
+  <details><summary>Pushing into nested families does nothing</summary>
+    Look at the per-pair rows. <i>Read-only</i>: the nested parameter is already associated with a parent parameter in the
+    family, so Revit drives it. <i>Missing on target</i>: the nested family doesn't have that parameter. <i>Conflicting</i>:
+    the target is a <b>type</b> parameter and every nested instance shares one nested type, so it can't hold a different
+    value per parent &mdash; make it an instance parameter in the nested family and pair to that.</details>
   <details><summary>Conflicts on a type parameter</summary>
     Instances of one type have different source values. Push into an instance parameter instead, or use a rule that resolves it.</details>
   <details><summary>Lengths come out in the wrong unit</summary>

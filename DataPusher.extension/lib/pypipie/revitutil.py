@@ -120,8 +120,23 @@ def element_type(doc, el):
 
 
 def element_name(el):
+    """Element name. IronPython can't resolve .Name on some subclasses (e.g. FamilySymbol),
+    so fall back to the base property and then to the type-name parameter."""
+    if el is None:
+        return ""
     try:
         return el.Name
+    except Exception:
+        pass
+    try:
+        from Autodesk.Revit.DB import Element
+        return Element.Name.GetValue(el)
+    except Exception:
+        pass
+    try:
+        p = el.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM) or \
+            el.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)
+        return (p.AsString() or "") if p is not None else ""
     except Exception:
         return ""
 
